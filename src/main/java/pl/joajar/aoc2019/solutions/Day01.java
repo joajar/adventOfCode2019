@@ -5,8 +5,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Day01 {
-    public static int part1solution() {
+    public static int part1result() {
         return prepareResult(getData());
+    }
+
+    public static int part2result() {
+        List<Integer> workingIntegerList = new ArrayList<>();
+        for (Integer myInteger : getData())
+            while (findFuel(myInteger) > 0) {
+                workingIntegerList.add(myInteger);
+                myInteger = findFuel(myInteger);
+            }
+        return prepareResult(workingIntegerList);
     }
 
     private static int findFuel(int fuel) {

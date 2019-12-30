@@ -7,7 +7,8 @@ public class Tests {
 
     @Test
     public void day01_tests() {
-        assertEquals(3457681, Day01.part1solution());
+        assertEquals(3457681, Day01.part1result());
+        assertEquals(5183653, Day01.part2result());
     }
 
 }
