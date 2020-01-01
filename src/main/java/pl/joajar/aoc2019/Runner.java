@@ -7,7 +7,6 @@ public class Runner {
     public static void main(String[] args) {
         System.out.println("Day 1 part 1 result: " + Day01.part1result());
         System.out.println("Day 1 part 2 result: " + Day01.part2result());
-        System.out.print("Day 2 data: ");
-        Day02.printData();
+        System.out.println("Day 2 part 1 result: " + Day02.part1result());
     }
 }
