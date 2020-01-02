@@ -4,10 +4,31 @@ import java.io.*;
 import java.util.Arrays;
 
 public class Day02 {
-    public static int part1result() {
+    public static int part1result(){
+        return calculateFirstInteger(12, 2);
+    }
+
+    public static int part2result() {
+        int minValue = 0, maxValue = 99, noun = minValue-1, verb = minValue, desiredResult = 19690720, result;
+
+        do {
+            if (noun == maxValue) {
+                noun = minValue; verb++;
+            } else noun++;
+
+            result = calculateFirstInteger(noun, verb);
+
+        } while (result != desiredResult && (verb != maxValue || noun != maxValue));
+
+        if (result == desiredResult) return 100 * noun + verb;
+        return -1;
+    }
+
+    public static int calculateFirstInteger(int noun, int verb) {
         int[] workingArray = getData();
-        workingArray[1] = 12;
-        workingArray[2] = 2;
+        workingArray[1] = noun;
+        workingArray[2] = verb;
+
         for (int index = 0; index <= workingArray.length / 4; index++) {
             switch (workingArray[4*index]) {
                 case 1:
