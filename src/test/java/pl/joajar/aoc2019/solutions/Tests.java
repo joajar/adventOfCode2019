@@ -16,4 +16,9 @@ public class Tests {
         assertEquals(3716293, Day02.part1result());
         assertEquals(6429, Day02.part2result());
     }
+
+    @Test
+    public void day03_tests() {
+        assertEquals(627, Day03.part1result());
+    }
 }
