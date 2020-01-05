@@ -15,7 +15,7 @@
     <description>Solutions of Advent-of-code exercises by joajar</description>
 
     <properties>
-        <java.version>1.8</java.version>
+        <java.version>1.9</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 

@@ -2,79 +2,107 @@ package pl.joajar.aoc2019.solutions;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Day03 {
     public static int part1result() {
+        return calculateResult(false);
+    }
+
+    public static int part2result() {
+        return calculateResult(true);
+    }
+
+    private static int calculateResult(Boolean is2partResult) {
         Map<Integer, String[]> ourData = getData();
 
-        Map<Integer, Set<Integer>> commonPositions
-                = findPositionsForWire(
-                findPositionsForWire(new HashMap<>(), ourData.get(0), true),
-                ourData.get(1), false);
+        /*  I've used the data structure shown below as a data set corresponding to the particular wire.
+         *  In brackets you may find the meaning of particular variables set used.
+         *
+         *  Map<Integer (x variable i.e. the first coordinate of the current grid point),
+         *      Map<Integer (y variable i.e. the second coordinate of the point),
+         *          Map<Boolean (always FALSE in case of calculation for the 1st wire, used only for calculation conducted for the 2nd wire:
+         *                              TRUE if the current grid point is a two wires intersection point and FALSE in the other case),
+         *              Integer(number of steps needed to reach this grid point)
+         *              >
+         *          >
+         *      >
+         */
 
-        TreeSet<Integer> distances = new TreeSet<>();
+        Map<Integer, Map<Integer, Map<Boolean, Integer>>> mapOf1stWirePositions =
+                findPositionsForWire(new HashMap<>(), ourData.get(0), false);
 
-        for (Integer workingX : commonPositions.keySet()) {
-            for (Integer workingY : commonPositions.get(workingX)) {
-                distances.add(Math.abs(workingX) + Math.abs(workingY));
+        Map<Integer, Map<Integer, Map<Boolean, Integer>>> mapOf2ndWirePositions =
+                findPositionsForWire(mapOf1stWirePositions, ourData.get(1), true);
+
+
+        int minimalDistance = Integer.MAX_VALUE, minimalPathLength = Integer.MAX_VALUE;
+
+        for (Integer int1 : mapOf2ndWirePositions.keySet()) {
+            for (Integer int2 : mapOf2ndWirePositions.get(int1).keySet()) {
+                if (mapOf2ndWirePositions.get(int1).get(int2).containsKey(true)) {
+
+                    minimalDistance = Math.min(minimalDistance, Math.abs(int1) + Math.abs(int2));
+
+                    minimalPathLength = Math.min(minimalPathLength,
+                            mapOf2ndWirePositions.get(int1).get(int2).get(true) + mapOf1stWirePositions.get(int1).get(int2).get(false));
+
+                }
             }
         }
 
-        int toReturn = -1;
-        try {
-            toReturn = distances.higher(0);
-        } catch (NullPointerException e) {
-            System.out.println("Null pointer exception!");
-            e.printStackTrace();
-        }
-        return toReturn;
+        return is2partResult ? minimalPathLength : minimalDistance;
     }
 
-    private static Map<Integer, Set<Integer>> findPositionsForWire(Map<Integer, Set<Integer>> mapVariable, String[] arrayVariable, boolean booleanVariable) {
-        int x = 0, y = 0;
+    private static Map<Integer, Map<Integer, Map<Boolean, Integer>>> findPositionsForWire(
+            Map<Integer, Map<Integer, Map<Boolean, Integer>>> inputMap, String[] arrayVariable, boolean is2ndWire) {
 
-        Map<Integer, Set<Integer>> pointsMap = new HashMap<>();
-        pointsMap.put(x, Stream.of(y).collect(Collectors.toSet()));
+        int x = 0, y = 0, stepsNumber = 0;
 
+        // building MUTABLE ( <- HashMap) data structure to return
+        Map<Integer, Map<Integer, Map<Boolean, Integer>>> workingMap = new HashMap<>(
+                Map.of(x, new HashMap<>(
+                        Map.of(y, new HashMap<>(
+                                Map.of(false, stepsNumber)
+                        ))
+                ))
+        );
+
+        // feeding data structure with data
         for (String workingString : arrayVariable) {
             for (int i = 0; i < Integer.parseInt(workingString.substring(1)); i++) {
 
                 switch (workingString.substring(0, 1)) {
                     case "R":
-                        x++;
-                        break;
+                        x++; break;
                     case "U":
-                        y++;
-                        break;
+                        y++; break;
                     case "L":
-                        x--;
-                        break;
+                        x--; break;
                     case "D":
-                        y--;
-                        break;
+                        y--; break;
                     default:
-                        System.out.println("Unknown code " + workingString.substring(0, 1) + " - something went wrong! ");
                         throw new IllegalStateException("Something went wrong!");
                 }
 
-                if (booleanVariable) {
-                    addPoint(pointsMap, x, y);
-                } else if (mapVariable.get(x) != null && (!mapVariable.get(x).isEmpty()) && mapVariable.get(x).contains(y)) {
-                    addPoint(pointsMap, x, y);
-                }
+                addPoint(workingMap,
+                        x,
+                        y,
+                        is2ndWire && !inputMap.isEmpty() && inputMap.containsKey(x) && inputMap.get(x).containsKey(y),
+                        ++stepsNumber);
+
             }
         }
-        return pointsMap;
+        return workingMap;
     }
 
-    private static void addPoint(Map<Integer, Set<Integer>> positionsMap, Integer x, Integer y) {
+    private static void addPoint(Map<Integer, Map<Integer, Map<Boolean, Integer>>> positionsMap, Integer x, Integer y, boolean isCrossing, Integer distance) {
         if (positionsMap.isEmpty()) {
             throw new IllegalStateException("Something went wrong!");
-        } else if (positionsMap.get(x) == null) {
-            positionsMap.put(x, Stream.of(y).collect(Collectors.toSet()));
-        } else positionsMap.get(x).add(y);
+        } else if (!positionsMap.containsKey(x)) {
+            positionsMap.put(x, new HashMap<>(Map.of(y, new HashMap<>(Map.of(isCrossing, distance)))));
+        } else if (!positionsMap.get(x).containsKey(y)) {
+            positionsMap.get(x).put(y, new HashMap<>(Map.of(isCrossing, distance)));
+        }
     }
 
     private static Map<Integer, String[]> getData() {
