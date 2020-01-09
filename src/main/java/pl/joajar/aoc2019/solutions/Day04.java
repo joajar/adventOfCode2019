@@ -4,8 +4,30 @@ import java.io.*;
 import java.util.Arrays;
 
 public class Day04 {
-    public static void printData() {
-        System.out.println(Arrays.toString(getData()));
+    public static int part1result() {
+        int[] dataArray = getData();
+        int resultCounter = 0;
+
+        for (int subsequentNumber = dataArray[0]; subsequentNumber <= dataArray[1]; subsequentNumber++) {
+
+            String[] workingArray = String.valueOf(subsequentNumber).split("");
+            int sameDigitCounters = 0;
+
+            for (int i = 0; i < workingArray.length - 1; i++) {
+                if (Integer.parseInt(workingArray[i]) > Integer.parseInt(workingArray[i+1])) {
+                    sameDigitCounters = 0;
+                    break;
+                }
+                if (Integer.parseInt(workingArray[i]) == Integer.parseInt(workingArray[i+1])) {
+                    sameDigitCounters++;
+                }
+            }
+
+            if (sameDigitCounters > 0) resultCounter++;
+
+        }
+
+        return resultCounter;
     }
 
     private static int[] getData() {

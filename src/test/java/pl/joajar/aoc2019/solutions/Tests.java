@@ -22,4 +22,9 @@ public class Tests {
         assertEquals(627, Day03.part1result());
         assertEquals(13190, Day03.part2result());
     }
+
+    @Test
+    public void day04_tests() {
+        assertEquals(1919, Day04.part1result());
+    }
 }
