@@ -12,5 +12,7 @@ public class Runner {
         System.out.println("Day 3 part 2 result: " + Day03.part2result());
         System.out.println("Day 4 part 1 result: " + Day04.part1result());
         System.out.println("Day 4 part 2 result: " + Day04.part2result());
+        System.out.print("Day 5 data: ");
+        Day05.printData();
     }
 }
